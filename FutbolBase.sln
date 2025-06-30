@@ -35,6 +35,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CE67A526-1599-4DA4-ACED-66DDEC1A546F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FutbolBase.Catalog.UnitTests", "tests\FutbolBase.Catalog.UnitTests\FutbolBase.Catalog.UnitTests.csproj", "{D501EC46-F5EC-4AB5-8686-BDF9894AD43E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +57,10 @@ Global
 		{BA2B0EE6-6C17-5264-670D-9F7D1C2459A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA2B0EE6-6C17-5264-670D-9F7D1C2459A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA2B0EE6-6C17-5264-670D-9F7D1C2459A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D501EC46-F5EC-4AB5-8686-BDF9894AD43E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D501EC46-F5EC-4AB5-8686-BDF9894AD43E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D501EC46-F5EC-4AB5-8686-BDF9894AD43E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D501EC46-F5EC-4AB5-8686-BDF9894AD43E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +77,7 @@ Global
 		{F17F4E33-5FAC-496E-B0BC-93FC19628D36} = {F4CA7844-F3C6-475E-8CDF-4FC88570E0C5}
 		{BA2B0EE6-6C17-5264-670D-9F7D1C2459A3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{F4CA7844-F3C6-475E-8CDF-4FC88570E0C5} = {71B1521E-FFE2-4C31-9F92-8E9C48588F2F}
+		{D501EC46-F5EC-4AB5-8686-BDF9894AD43E} = {CE67A526-1599-4DA4-ACED-66DDEC1A546F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B336954F-4F5B-4C89-92FE-1BDDC7A156CC}

@@ -1,4 +1,6 @@
-﻿namespace FutbolBase.Catalog.Api.App.Domain.Entities
+﻿using FutbolBase.Catalog.Api.App.Domain.Entities.Clubs;
+
+namespace FutbolBase.Catalog.Api.App.Domain.Entities
 {
     public class UserClub : BaseEntity
     {

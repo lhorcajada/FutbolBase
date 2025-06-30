@@ -1,4 +1,4 @@
-﻿using FutbolBase.Catalog.Api.App.Domain.Entities;
+﻿using FutbolBase.Catalog.Api.App.Domain.Entities.Clubs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

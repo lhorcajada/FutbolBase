@@ -1,4 +1,5 @@
 ﻿using FutbolBase.Catalog.Api.App.Domain.Entities;
+using FutbolBase.Catalog.Api.App.Domain.Entities.Clubs;
 using Microsoft.EntityFrameworkCore;
 using SmartEnum.EFCore;
 using System.Data.Common;

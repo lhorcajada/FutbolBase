@@ -1,7 +1,9 @@
-﻿using FutbolBase.Api.App.Common;
+﻿using FluentValidation;
+using FutbolBase.Api.App.Common;
 using FutbolBase.Api.App.Common.Behaviors;
 using FutbolBase.Catalog.Api.App.DependencyInjection;
 using FutbolBase.Catalog.Api.App.Domain.Entities;
+using FutbolBase.Catalog.Api.App.Domain.Entities.Clubs;
 using FutbolBase.Catalog.Api.App.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -52,16 +54,26 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
                 .FirstOrDefaultAsync(c => c.Code == request.CountryCode, cancellationToken: cancellationToken);
             if (country == null)
                 throw new KeyNotFoundException($"Country '{request.CountryCode}' Not Found");
-            var club = new Club
-            {
-                CountryId = country.Id,
-                Name = request.Name
-            };
+            var club = new Club(request.Name, country.Id);
             _catalogDbContext.Clubs.Add(club);
             await _catalogDbContext.SaveChangesAsync(cancellationToken);
             return Unit.Value;
 
         }
     }
+    public class Validator : AbstractValidator<ClubCommand>
+    {
+        public Validator()
+        {
+            RuleFor(r => r.Name)
+                .NotEmpty()
+                .MaximumLength(ValidationConstants.ClubNameMaxLength);
+            RuleFor(r => r.CountryCode)
+                .NotEmpty()
+                .MaximumLength(ValidationConstants.CountryCodeMaxLength);
+
+        }
+    }
+
 
 }

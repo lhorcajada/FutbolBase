@@ -1,0 +1,25 @@
+.container {
+	display: flex;
+	min-height: 100vh;
+}
+
+.content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	padding: 20px;
+	margin-left: 250px;
+	/* Espaciado para el menú lateral en pantallas grandes */
+}
+
+@media (max-width: 900px) {
+	.content {
+		margin-left: 0;
+		/* Sin espaciado en pantallas pequeñas */
+	}
+}
+
+.main {
+	flex: 1;
+	padding: 20px;
+}

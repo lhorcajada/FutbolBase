@@ -1,0 +1,24 @@
+.drawerPaper {
+	width: 250px;
+	background-color: #1976d2;
+	color: white;
+	border-right: 1px solid #ddd;
+}
+
+.list {
+	padding: 0;
+}
+
+.list a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.list li {
+	padding: 15px 20px;
+}
+
+.list li:hover {
+	background-color: #1565c0;
+	cursor: pointer;
+}

@@ -17,8 +17,11 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/club/create",
-                    async (ClubCommand command, IMediator mediator, CancellationToken cancellationToken)
-                        => await mediator.Send(command, cancellationToken))
+                    async (ClubCommand command, IMediator mediator, CancellationToken cancellationToken) =>
+                    {
+                        await mediator.Send(command, cancellationToken);
+                        return Results.Ok();
+                    })
                 .WithName(nameof(CreateClub))
                 .WithTags(ClubConstants.ClubFeature)
                 .Produces(StatusCodes.Status200OK)
@@ -26,7 +29,7 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
         }
     }
 
-    public class ClubCommand : ICommand, IInvalidateCacheRequest, IRequest<IResult>
+    public class ClubCommand : ICommand, IInvalidateCacheRequest
     {
         public string CountryCode { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
@@ -34,7 +37,7 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
         public string PrefixCacheKey => ClubConstants.CachePrefix;
     }
 
-    public class ClubHandler : IRequestHandler<ClubCommand, IResult>
+    public class ClubHandler : IRequestHandler<ClubCommand, Unit>
     {
         private readonly CatalogDbContext _catalogDbContext;
 
@@ -42,7 +45,7 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
         {
             _catalogDbContext = catalogDbContext;
         }
-        public async Task<IResult> Handle(ClubCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ClubCommand request, CancellationToken cancellationToken)
         {
             var country = await _catalogDbContext.Countries
                 .AsNoTracking()
@@ -56,7 +59,8 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
             };
             _catalogDbContext.Clubs.Add(club);
             await _catalogDbContext.SaveChangesAsync(cancellationToken);
-            return Results.Created($"/clubs/{club.Id}", club);
+            return Unit.Value;
+
         }
     }
 

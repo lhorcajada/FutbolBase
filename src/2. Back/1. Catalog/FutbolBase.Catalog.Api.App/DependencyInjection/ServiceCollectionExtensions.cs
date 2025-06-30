@@ -16,15 +16,14 @@ namespace FutbolBase.Catalog.Api.App.DependencyInjection
             IConfiguration configuration)
         {
             services.AddControllers()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateClub>())
-                .AddApplicationPart(typeof(CreateClub).Assembly);
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<App>())
+                .AddApplicationPart(typeof(App).Assembly);
 
-            services.AddCustomProblemDetails()
-                .AddValidatorsFromAssembly(typeof(CreateClub).Assembly)
+            services
+                .AddCustomProblemDetails()
+                .AddValidatorsFromAssembly(typeof(App).Assembly)
                 .AddDiagnostics(configuration)
-                .AddMediatR(typeof(CreateClub).Assembly);
-
-           
+                .AddMediatR(typeof(App).Assembly);
 
             services.AddBehaviors()
              .AddEasyCaching(options => { options.UseInMemory(Cache.CacheDefaultName); });

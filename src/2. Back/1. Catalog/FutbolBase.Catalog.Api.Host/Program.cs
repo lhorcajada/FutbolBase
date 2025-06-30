@@ -1,13 +1,12 @@
+using FutbolBase.Catalog.Api.App.DependencyInjection;
 using FutbolBase.Catalog.Api.App.Domain.Entities;
 using FutbolBase.Catalog.Api.App.Infrastructure.Persistence;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using System.Data.Common;
-using FutbolBase.Catalog.Api.App.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 

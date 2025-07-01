@@ -1,5 +1,5 @@
 import { apiService } from './apiService';
 
 export const countriesService = {
-	getCountries: () => apiService.get('/countries'), // Endpoint para obtener países
+	getCountries: () => apiService.get('/api/catalog/countries'), // Endpoint para obtener países
 };

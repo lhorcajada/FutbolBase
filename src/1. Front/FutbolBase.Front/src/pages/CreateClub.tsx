@@ -1,88 +1,99 @@
-import React, { useState, useEffect } from 'react';
-import {
-	Box,
-	Button,
-	TextField,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	MenuItem,
-} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { TextField, Button, Grid, Typography, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-import { countriesService } from '../services/countriesService';
+import CountrySelector from '../components/CountrySelector';
 import { clubsService } from '../services/clubsService';
+
 import styles from './CreateClub.module.css';
+import { countriesService } from '../services/countriesService';
+import type { Country } from '../types/countryType';
 
-interface CreateClubProps {
-	open: boolean;
-	handleClose: () => void;
-}
 
-const CreateClub: React.FC<CreateClubProps> = ({ open, handleClose }) => {
+const CreateClubPage: React.FC = () => {
 	const [name, setName] = useState('');
-	const [countryId, setCountryId] = useState<number | null>(null);
-	const [countries, setCountries] = useState([]);
+	const [countryCode, setCountryCode] = useState('');
 	const { enqueueSnackbar } = useSnackbar();
+	const navigate = useNavigate();
+	const [countries, setCountries] = useState<Country[]>([]);
 
-	useEffect(() => {
-		if (open) {
-			countriesService.getCountries().then((response) => setCountries(response.data));
-		}
-	}, [open]);
+	const handleSubmit = async (event: React.FormEvent) => {
+		event.preventDefault();
 
-	const handleCreateClub = () => {
-		if (!name || !countryId) {
-			enqueueSnackbar('Por favor, complete todos los campos.', { variant: 'warning' });
+		if (!name || !countryCode) {
+			enqueueSnackbar('Todos los campos son obligatorios', { variant: 'warning' });
 			return;
 		}
 
-		clubsService.createClub({ name, countryId })
-			.then(() => {
-				enqueueSnackbar('Club creado exitosamente.', { variant: 'success' });
-				handleClose();
-				setName('');
-				setCountryId(null);
-			})
-			.catch(() => {
-				enqueueSnackbar('Ocurrió un error al crear el club.', { variant: 'error' });
-			});
+		try {
+			await clubsService.createClub({ name, countryCode });
+			enqueueSnackbar('Club creado correctamente', { variant: 'success' });
+			navigate('/clubs'); // Redirige a la lista de clubes
+		} catch (error: any) {
+			enqueueSnackbar(error.message || 'Error al crear el club', { variant: 'error' });
+		}
 	};
 
+	useEffect(() => {
+		const fetchCountries = async () => {
+			try {
+				const response = await countriesService.getCountries();
+				setCountries(response.data);
+			} catch (err) {
+				console.error(err);
+			}
+		};
+
+		fetchCountries();
+	}, []);
+
 	return (
-		<Dialog open={open} onClose={handleClose} fullWidth>
-			<DialogTitle>Crear Club</DialogTitle>
-			<DialogContent>
-				<Box className={styles.form}>
+
+		<Box className={styles.box}>
+
+			<Typography variant="h4" gutterBottom>
+				Crear Nuevo Club
+			</Typography>
+			<Grid container spacing={2} component="form" onSubmit={handleSubmit}>
+				<Grid size={12}>
 					<TextField
 						label="Nombre del Club"
-						variant="outlined"
-						fullWidth
 						value={name}
 						onChange={(e) => setName(e.target.value)}
-					/>
-					<TextField
-						select
-						label="País"
-						variant="outlined"
+						inputProps={{ maxLength: 200 }}
+						required
 						fullWidth
-						value={countryId || ''}
-						onChange={(e) => setCountryId(Number(e.target.value))}
+						variant="outlined"
+					/>
+				</Grid>
+
+				<Grid size={12}>
+					<CountrySelector
+						value={countryCode}
+						onChange={(code) => setCountryCode(code)}
+						options={countries}
+					/>
+				</Grid>
+
+				<Grid size={12}>
+					<Button type="submit" variant="contained" color="primary" fullWidth>
+						Crear Club
+					</Button>
+				</Grid>
+
+				<Grid size={12}>
+					<Button
+						variant="outlined"
+						color="secondary"
+						fullWidth
+						onClick={() => navigate('/clubs')}
 					>
-						{countries.map((country: any) => (
-							<MenuItem key={country.Id} value={country.Id}>
-								{country.Name}
-							</MenuItem>
-						))}
-					</TextField>
-				</Box>
-			</DialogContent>
-			<DialogActions>
-				<Button onClick={handleClose}>Cancelar</Button>
-				<Button onClick={handleCreateClub}>Crear</Button>
-			</DialogActions>
-		</Dialog>
+						Volver a la Lista de Clubs
+					</Button>
+				</Grid>
+			</Grid>
+		</Box>
 	);
 };
 
-export default CreateClub;
+export default CreateClubPage;

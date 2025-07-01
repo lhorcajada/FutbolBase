@@ -1,7 +1,23 @@
 .header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1100;
 	background-color: #1976d2;
+	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .title {
 	flex-grow: 1;
+}
+
+.menuButton {
+	margin-right: 16px;
+}
+
+@media (min-width: 900px) {
+	.menuButton {
+		display: none;
+	}
 }

@@ -7,19 +7,18 @@
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	padding: 20px;
-	margin-left: 250px;
-	/* Espaciado para el menú lateral en pantallas grandes */
+	padding: 0px;
+	margin-top: 64px;
 }
 
 @media (max-width: 900px) {
 	.content {
 		margin-left: 0;
-		/* Sin espaciado en pantallas pequeñas */
+		margin-top: 56px;
 	}
 }
 
 .main {
 	flex: 1;
-	padding: 20px;
+	padding: 0px;
 }

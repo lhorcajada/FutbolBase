@@ -2,8 +2,8 @@
 using FutbolBase.Api.App.Common;
 using FutbolBase.Api.App.Common.Behaviors;
 using FutbolBase.Catalog.Api.App.DependencyInjection;
-using FutbolBase.Catalog.Api.App.Domain.Entities;
 using FutbolBase.Catalog.Api.App.Domain.Entities.Clubs;
+using FutbolBase.Catalog.Api.App.Features.Countries;
 using FutbolBase.Catalog.Api.App.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -18,7 +18,7 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/club/create",
+            app.MapPost("api/catalog/club/create",
                     async (ClubCommand command, IMediator mediator, CancellationToken cancellationToken) =>
                     {
                         await mediator.Send(command, cancellationToken);
@@ -36,7 +36,7 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
         public string CountryCode { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
 
-        public string PrefixCacheKey => ClubConstants.CachePrefix;
+        public string PrefixCacheKey => CountryConstants.CachePrefix;
     }
 
     public class ClubHandler : IRequestHandler<ClubCommand, Unit>
@@ -50,7 +50,6 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
         public async Task<Unit> Handle(ClubCommand request, CancellationToken cancellationToken)
         {
             var country = await _catalogDbContext.Countries
-                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Code == request.CountryCode, cancellationToken: cancellationToken);
             if (country == null)
                 throw new KeyNotFoundException($"Country '{request.CountryCode}' Not Found");

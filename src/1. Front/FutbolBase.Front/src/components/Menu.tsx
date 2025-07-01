@@ -1,90 +1,39 @@
-import React, { useState } from 'react';
-import {
-	Drawer,
-	ListItem,
-	ListItemButton,
-	ListItemText,
-	Toolbar,
-	IconButton,
-	Divider,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
-import styles from './Menu.module.css';
+import React from 'react';
+import { Drawer, List, ListItem, ListItemText, ListItemButton } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
+interface MenuProps {
+	isOpen: boolean;
+	onClose: () => void;
+}
 
-const Menu: React.FC = () => {
-	const [mobileOpen, setMobileOpen] = useState(false);
+const Menu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
+	const navigate = useNavigate();
 
-	const handleDrawerToggle = () => {
-		setMobileOpen(!mobileOpen);
+	const handleNavigation = (path: string) => {
+		navigate(path);
+		onClose();
 	};
-
-	const drawer = (
-		<div>
-			<Toolbar />
-			<Divider />
-			<ListItem>
-				<ListItemButton component={Link} to="/">
-					<ListItemText primary="Inicio" />
-				</ListItemButton>
-			</ListItem>
-			<ListItem>
-				<ListItemButton component={Link} to="/clubs">
-					<ListItemText primary="Clubes" />
-				</ListItemButton>
-			</ListItem>
-			<ListItem>
-				<ListItemButton component={Link} to="/about">
-					<ListItemText primary="Acerca de" />
-				</ListItemButton>
-			</ListItem>
-
-		</div>
-	);
-
 	return (
-		<>
-			{/* Ícono para abrir el menú en dispositivos pequeños */}
-			<IconButton
-				color="inherit"
-				aria-label="open drawer"
-				edge="start"
-				onClick={handleDrawerToggle}
-				sx={{ display: { sm: 'none' } }} /* Solo visible en pantallas pequeñas */
-			>
-				<MenuIcon />
-			</IconButton>
-
-			{/* Drawer para pantallas pequeñas */}
-			<Drawer
-				variant="temporary"
-				open={mobileOpen}
-				onClose={handleDrawerToggle}
-				ModalProps={{
-					keepMounted: true, // Mejora el rendimiento en dispositivos móviles
-				}}
-				classes={{
-					paper: styles.drawerPaper,
-				}}
-			>
-				{drawer}
-			</Drawer>
-
-			{/* Drawer permanente para pantallas grandes */}
-			<Drawer
-				variant="permanent"
-				open
-				classes={{
-					paper: styles.drawerPaper,
-				}}
-				sx={{
-					display: { xs: 'none', sm: 'block' }, // Oculto en pantallas pequeñas
-				}}
-			>
-				{drawer}
-			</Drawer>
-		</>
+		<Drawer anchor="left" open={isOpen} onClose={onClose}>
+			<List>
+				<ListItem disablePadding>
+					<ListItemButton>
+						<ListItemText primary="Inicio" onClick={() => handleNavigation('/')} />
+					</ListItemButton>
+				</ListItem>
+				<ListItem disablePadding>
+					<ListItemButton>
+						<ListItemText primary="Clubs" onClick={() => handleNavigation('/clubs')} />
+					</ListItemButton>
+				</ListItem>
+				<ListItem disablePadding>
+					<ListItemButton>
+						<ListItemText primary="Contacto" onClick={onClose} />
+					</ListItemButton>
+				</ListItem>
+			</List>
+		</Drawer>
 	);
 };
 

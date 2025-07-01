@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Data.Common;
 
 var builder = WebApplication.CreateBuilder(args);
-
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -33,7 +33,7 @@ builder.Services.AddDbContext<CatalogDbContext>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<CatalogDbContext>()
     .AddDefaultTokenProviders();
-
+builder.Services.AddDbContext<ReadOnlyCatalogDbContext>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = "JwtBearer";
@@ -53,6 +53,17 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpecificOrigins,
+        corsPolicyBuilder =>
+        {
+            corsPolicyBuilder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithExposedHeaders("Content-Disposition");
+        });
+});
 builder.Services.AddOpenApi();
 
 builder.Services.AddHttpClient();
@@ -66,6 +77,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors(myAllowSpecificOrigins);
 }
 app.UseProblemDetails()
     .UseHttpsRedirection()

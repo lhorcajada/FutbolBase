@@ -18,7 +18,7 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("api/catalog/club/create",
+            app.MapPost("api/catalog/club",
                     async (ClubCommand command, IMediator mediator, CancellationToken cancellationToken) =>
                     {
                         await mediator.Send(command, cancellationToken);
@@ -31,7 +31,7 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
         }
     }
 
-    public class ClubCommand : ICommand, IInvalidateCacheRequest
+    public class CreateClubCommand : ICommand, IInvalidateCacheRequest
     {
         public string CountryCode { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
@@ -39,17 +39,18 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
         public string PrefixCacheKey => CountryConstants.CachePrefix;
     }
 
-    public class ClubHandler : IRequestHandler<ClubCommand, Unit>
+    public class CreateClubHandler : IRequestHandler<CreateClubCommand, Unit>
     {
         private readonly CatalogDbContext _catalogDbContext;
 
-        public ClubHandler(CatalogDbContext catalogDbContext)
+        public CreateClubHandler(CatalogDbContext catalogDbContext)
         {
             _catalogDbContext = catalogDbContext;
         }
-        public async Task<Unit> Handle(ClubCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateClubCommand request, CancellationToken cancellationToken)
         {
-            var country = await _catalogDbContext.Countries
+            var country = await _catalogDbContext
+                .Countries
                 .FirstOrDefaultAsync(c => c.Code == request.CountryCode, cancellationToken: cancellationToken);
             if (country == null)
                 throw new KeyNotFoundException($"Country '{request.CountryCode}' Not Found");
@@ -60,9 +61,9 @@ namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
 
         }
     }
-    public class Validator : AbstractValidator<ClubCommand>
+    public class CreateValidator : AbstractValidator<CreateClubCommand>
     {
-        public Validator()
+        public CreateValidator()
         {
             RuleFor(r => r.Name)
                 .NotEmpty()

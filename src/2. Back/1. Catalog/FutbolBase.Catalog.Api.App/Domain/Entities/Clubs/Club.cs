@@ -6,8 +6,8 @@
         public int CountryId { get;  private set; }
         public string? ShieldUrl { get; private set; }
 
-        public List<UserClub> UserClubs { get; set; } = [];
-        public Country Country { get; set; } = new();
+        public List<UserClub> UserClubs { get; set; }
+        public Country Country { get; set; } 
 
         public Club(string name, int countryId, string? shieldUrl = "")
         {

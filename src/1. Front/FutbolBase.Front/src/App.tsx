@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { SnackbarProvider } from 'notistack';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Menu from './components/Menu';
-import Home from './pages/Home';
-import Clubs from './pages/Clubs';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Menu from './components/menu/Menu';
+import Home from './pages/home/Home';
+import Clubs from './pages/clubs/list/Clubs';
+import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
 import styles from './App.module.css';
-import CreateClub from './pages/CreateClub';
+import ClubForm from './pages/clubs/form/ClubForm';
 
 const App: React.FC = () => {
 	const [isMenuOpen, setMenuOpen] = useState(false);
@@ -27,7 +27,8 @@ const App: React.FC = () => {
 							<Routes>
 								<Route path="/" element={<Home />} />
 								<Route path="/clubs" element={<Clubs />} />
-								<Route path="/clubs/create" element={<CreateClub />} />
+								<Route path="/clubs/create" element={<ClubForm />} />
+								<Route path="/clubs/edit/:id" element={<ClubForm isEdit={true} />} />
 							</Routes>
 						</main>
 						<Footer />

@@ -13,7 +13,8 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { clubsService } from '../services/clubsService';
+import { clubsService } from '../../../services/clubsService';
+import ConfirmDialog from '../../../components/dialog/confirmDialog';
 
 interface Club {
 	id: string;
@@ -28,6 +29,8 @@ const Clubs: React.FC = () => {
 	const [clubs, setClubs] = useState<Club[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
+	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+	const [selectedClubId, setSelectedClubId] = useState<string | null>(null);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -46,15 +49,23 @@ const Clubs: React.FC = () => {
 
 		fetchClubs();
 	}, []);
-
-	const handleDelete = async (id: string) => {
-		if (window.confirm('¿Estás seguro de que deseas eliminar este club?')) {
+	const handleOpenDialog = (id: string) => {
+		setSelectedClubId(id);
+		setDialogOpen(true);
+	};
+	const handleCloseDialog = () => {
+		setDialogOpen(false);
+		setSelectedClubId(null);
+	};
+	const handleConfirmDelete = async () => {
+		if (selectedClubId) {
 			try {
-				await clubsService.deleteClub(id);
-				setClubs((prevClubs) => prevClubs.filter((club) => club.id !== id));
+				await clubsService.deleteClub(selectedClubId);
+				setClubs((prevClubs) => prevClubs.filter((club) => club.id !== selectedClubId));
 			} catch (err) {
-				console.error('Error al eliminar el club:', err);
 				setError('No se pudo eliminar el club. Inténtalo nuevamente.');
+			} finally {
+				handleCloseDialog();
 			}
 		}
 	};
@@ -96,7 +107,7 @@ const Clubs: React.FC = () => {
 					variant="contained"
 					color="primary"
 					startIcon={<AddIcon />}
-					onClick={() => navigate('/clubs/create')}
+					onClick={() => navigate(`/clubs/create`)}
 				>
 					Crear Club
 				</Button>
@@ -116,20 +127,18 @@ const Clubs: React.FC = () => {
 						divider
 						secondaryAction={
 							<>
-								{/* Botón de Editar */}
 								<IconButton
 									edge="end"
 									aria-label="edit"
-									onClick={() => console.log(`Editar club: ${club.id}`)}
+									onClick={() => navigate(`/clubs/edit/${club.id}`)}
 								>
 									<EditIcon />
 								</IconButton>
 
-								{/* Botón de Eliminar */}
 								<IconButton
 									edge="end"
 									aria-label="delete"
-									onClick={() => handleDelete(club.id)}
+									onClick={() => handleOpenDialog(club.id)}
 								>
 									<DeleteIcon />
 								</IconButton>
@@ -143,6 +152,15 @@ const Clubs: React.FC = () => {
 					</ListItem>
 				))}
 			</List>
+			<ConfirmDialog
+				open={dialogOpen}
+				title="Confirmar eliminación"
+				message="¿Estás seguro de que deseas eliminar este club? Esta acción no se puede deshacer."
+				onConfirm={handleConfirmDelete}
+				onCancel={handleCloseDialog}
+				confirmText="Eliminar"
+				cancelText="Cancelar"
+			/>
 		</Box>
 	);
 };

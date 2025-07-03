@@ -1,8 +1,6 @@
 import React from 'react';
 import { Autocomplete, TextField } from '@mui/material';
-import type { Country } from '../types/countryType';
-
-
+import type { Country } from '../../types/countryType';
 
 interface CountrySelectorProps {
 	value: string;

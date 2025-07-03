@@ -1,9 +1,9 @@
-﻿using FluentValidation;
+﻿using System.Reflection.Emit;
+using FluentValidation;
 using FutbolBase.Api.App.Common;
 using FutbolBase.Api.App.Common.Behaviors;
 using FutbolBase.Catalog.Api.App.DependencyInjection;
 using FutbolBase.Catalog.Api.App.Domain.Entities.Clubs;
-using FutbolBase.Catalog.Api.App.Features.Countries;
 using FutbolBase.Catalog.Api.App.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -14,65 +14,68 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FutbolBase.Catalog.Api.App.Features.Clubs.Commands
 {
-    public class CreateClub : IFeatureModule
+    public class UpdateClub : IFeatureModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("api/catalog/club",
-                    async (CreateClubCommand command, IMediator mediator, CancellationToken cancellationToken) =>
+            app.MapPut("api/catalog/club/{id}",
+                    async (string id, UpdateClubCommand command,  IMediator mediator, CancellationToken cancellationToken) =>
                     {
+                        command.ClubId = id;
                         await mediator.Send(command, cancellationToken);
                         return Results.Ok();
                     })
-                .WithName(nameof(CreateClub))
+                .WithName(nameof(UpdateClub))
                 .WithTags(ClubConstants.ClubFeature)
                 .Produces(StatusCodes.Status200OK)
                 .Produces<ProblemDetails>(StatusCodes.Status409Conflict);
         }
     }
 
-    public class CreateClubCommand : ICommand, IInvalidateCacheRequest
+    public class UpdateClubCommand : ICommand, IInvalidateCacheRequest
     {
+        public string ClubId { get; set; } = string.Empty;
+        public string ClubName { get; set; } = string.Empty;
         public string CountryCode { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-
-        public string PrefixCacheKey => CountryConstants.CachePrefix;
+        public string PrefixCacheKey => ClubConstants.CachePrefix;
     }
 
-    public class CreateClubHandler : IRequestHandler<CreateClubCommand, Unit>
+    public class UpdateDeleteClubHandler : IRequestHandler<UpdateClubCommand, Unit>
     {
         private readonly CatalogDbContext _catalogDbContext;
 
-        public CreateClubHandler(CatalogDbContext catalogDbContext)
+        public UpdateDeleteClubHandler(CatalogDbContext catalogDbContext)
         {
             _catalogDbContext = catalogDbContext;
         }
-        public async Task<Unit> Handle(CreateClubCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateClubCommand request, CancellationToken cancellationToken)
         {
+            var club = await _catalogDbContext.Clubs
+                .FirstOrDefaultAsync(c => c.Id == request.ClubId, cancellationToken: cancellationToken);
+            if (club == null)
+                throw new KeyNotFoundException($"Club '{request.ClubId}' Not Found");
             var country = await _catalogDbContext
                 .Countries
-                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Code == request.CountryCode, cancellationToken: cancellationToken);
             if (country == null)
                 throw new KeyNotFoundException($"Country '{request.CountryCode}' Not Found");
-            var club = new Club(request.Name, country.Id);
-            await _catalogDbContext.Clubs.AddAsync(club, cancellationToken);
+
+            club.UpdateName(request.ClubName);
+            club.UpdateCountry(country.Id);
+
             await _catalogDbContext.SaveChangesAsync(cancellationToken);
             return Unit.Value;
 
         }
     }
-    public class CreateValidator : AbstractValidator<CreateClubCommand>
+    public class UpdateClubValidator : AbstractValidator<DeleteClubCommand>
     {
-        public CreateValidator()
+        public UpdateClubValidator()
         {
-            RuleFor(r => r.Name)
+            RuleFor(r => r.ClubId)
                 .NotEmpty()
                 .MaximumLength(ValidationConstants.ClubNameMaxLength);
-            RuleFor(r => r.CountryCode)
-                .NotEmpty()
-                .MaximumLength(ValidationConstants.CountryCodeMaxLength);
-
+           
         }
     }
 

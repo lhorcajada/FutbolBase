@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="2" failures="0" errors="0" time="0.153669">
+    <testsuite name="src/components/menu/Menu.test.tsx" timestamp="2025-07-03T09:14:14.632Z" hostname="ZG10-5CG4253GZN" tests="2" failures="0" errors="0" skipped="0" time="0.153669">
+        <testcase classname="src/components/menu/Menu.test.tsx" name="Menu Component &gt; renderiza correctamente las opciones del menú" time="0.136503">
+        </testcase>
+        <testcase classname="src/components/menu/Menu.test.tsx" name="Menu Component &gt; llama a onClose al hacer clic en &quot;Contacto&quot;" time="0.0156082">
+        </testcase>
+    </testsuite>
+</testsuites>

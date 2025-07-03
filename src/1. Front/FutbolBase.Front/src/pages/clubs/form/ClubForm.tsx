@@ -33,7 +33,7 @@ const ClubForm: React.FC<{ isEdit?: boolean }> = ({ isEdit = false }) => {
 					const response = await clubsService.getClub(id);
 					setName(response.data.name);
 					setCountryCode(response.data.country.code);
-				} catch (err) {
+				} catch {
 					enqueueSnackbar('Error al cargar los datos del club', { variant: 'error' });
 				}
 			}
@@ -61,8 +61,12 @@ const ClubForm: React.FC<{ isEdit?: boolean }> = ({ isEdit = false }) => {
 			}
 
 			navigate('/clubs');
-		} catch (error: any) {
-			enqueueSnackbar(error.message || 'Error al guardar el club', { variant: 'error' });
+		} catch (error: unknown) {
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: 'Error al guardar el club';
+			enqueueSnackbar(errorMessage, { variant: 'error' });
 		}
 	};
 

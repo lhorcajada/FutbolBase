@@ -39,9 +39,8 @@ const Clubs: React.FC = () => {
 				setLoading(true);
 				const response = await clubsService.getClubs();
 				setClubs(response.data);
-			} catch (err) {
+			} catch {
 				setError('No se pudieron cargar los clubes. Inténtalo nuevamente.');
-				console.error(err);
 			} finally {
 				setLoading(false);
 			}
@@ -62,7 +61,7 @@ const Clubs: React.FC = () => {
 			try {
 				await clubsService.deleteClub(selectedClubId);
 				setClubs((prevClubs) => prevClubs.filter((club) => club.id !== selectedClubId));
-			} catch (err) {
+			} catch {
 				setError('No se pudo eliminar el club. Inténtalo nuevamente.');
 			} finally {
 				handleCloseDialog();

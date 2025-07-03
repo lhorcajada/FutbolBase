@@ -1,23 +1,22 @@
-import { Aviso } from '@tracasa/justicia-components';
-import React, { useState, useEffect } from 'react';
+import { useSnackbar } from 'notistack';
+import React, { useEffect } from 'react';
 
 interface GlobalErrorHandlerProps {
 	onErrorHandled?: () => void; // Callback que se ejecutará después de manejar el error
 	children: React.ReactNode;
 }
 
-export const GlobalErrorHandler: React.FC<GlobalErrorHandlerProps> = ({ onErrorHandled, children }) => {
-	const [error, setError] = useState<string | null>(null);
-
+export const GlobalErrorHandler: React.FC<GlobalErrorHandlerProps> = ({ children }) => {
+	const { enqueueSnackbar } = useSnackbar();
 	useEffect(() => {
 		// Capturar errores sincrónicos
 		window.onerror = (error) => {
-			setError(error instanceof Error ? error.message : 'Error desconocido');
+			enqueueSnackbar(error instanceof Error ? error.message : 'Error desconocido', { variant: 'error' });
 		};
 
 		// Capturar errores en promesas no manejadas
 		window.onunhandledrejection = (event) => {
-			setError(event.reason instanceof Error ? event.reason.message : 'Error desconocido');
+			enqueueSnackbar(event.reason instanceof Error ? event.reason.message : 'Error desconocido', { variant: 'error' });
 		};
 
 		return () => {
@@ -25,27 +24,12 @@ export const GlobalErrorHandler: React.FC<GlobalErrorHandlerProps> = ({ onErrorH
 			window.onerror = null;
 			window.onunhandledrejection = null;
 		};
-	}, []);
-
-	const handleCloseError = () => {
-		setError(null);
-		if (onErrorHandled) {
-			onErrorHandled();
-		}
-	};
+	}, [enqueueSnackbar]);
 
 	return (
 		<>
 			{children}
-			{error && (
-				<Aviso
-					message={error}
-					type='error'
-					onClose={() => {
-						handleCloseError();
-					}}
-				/>
-			)}
+
 		</>
 	);
 };

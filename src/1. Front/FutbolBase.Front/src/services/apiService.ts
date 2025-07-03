@@ -11,7 +11,7 @@ const apiClient = axios.create({
 // Funciones genéricas para métodos HTTP
 export const apiService = {
 	get: (url: string) => apiClient.get(url),
-	post: (url: string, data: any) => apiClient.post(url, data),
-	put: (url: string, data: any) => apiClient.put(url, data),
+	post: <T>(url: string, data: T) => apiClient.post(url, data),
+	put: <T>(url: string, data: T) => apiClient.put(url, data),
 	delete: (url: string) => apiClient.delete(url),
 };
